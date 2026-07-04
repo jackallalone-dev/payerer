@@ -361,6 +361,7 @@ document.getElementById("savePay").addEventListener("click", ()=>{
 const THEME_KEY = "payment-schedule-theme";
 const themeSelect = document.getElementById("themeSelect");
 const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+const themeColorMeta = document.querySelector('meta[name="theme-color"]');
 
 function applyTheme(){
   let pref = "system";
@@ -368,6 +369,9 @@ function applyTheme(){
   const dark = pref === "dark" || (pref === "system" && systemDark.matches);
   document.documentElement.dataset.theme = dark ? "dark" : "light";
   themeSelect.value = pref;
+  /* keep the browser/status bar the same color as the app background */
+  const paper = getComputedStyle(document.documentElement).getPropertyValue("--paper").trim();
+  if(themeColorMeta && paper) themeColorMeta.setAttribute("content", paper);
 }
 themeSelect.addEventListener("change", ()=>{
   try{ localStorage.setItem(THEME_KEY, themeSelect.value); }catch(e){}
