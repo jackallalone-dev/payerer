@@ -54,6 +54,12 @@ h1{
 }
 .addrow{display:flex;justify-content:flex-end;margin-bottom:30px}
 
+/* sticky summary: pin the whole header, month heads stack below it */
+body.sticky-summary header{
+  position:sticky;top:0;z-index:3;
+  background:var(--paper);
+}
+
 .btn{
   font:inherit;font-size:14px;font-weight:600;
   padding:10px 18px;border-radius:8px;border:none;cursor:pointer;
@@ -173,6 +179,11 @@ html[data-theme="dark"] .field select{
   padding:1px 5px;word-break:break-all;
 }
 .setting:last-child{margin-bottom:0}
+.checkrow{
+  display:flex;align-items:center;gap:8px;
+  font-size:14px;cursor:pointer;user-select:none;
+}
+.checkrow input{width:16px;height:16px;accent-color:var(--accent);cursor:pointer}
 .setmsg{font-size:13px;margin-top:12px;display:none}
 .setmsg.ok{color:var(--accent);display:block}
 .setmsg.bad{color:var(--danger);display:block}
@@ -182,7 +193,7 @@ html[data-theme="dark"] .field select{
 .month-head{
   display:flex;align-items:baseline;justify-content:space-between;
   padding:8px 0;border-bottom:2px solid var(--ink);
-  position:sticky;top:0;background:var(--paper);z-index:2;
+  position:sticky;top:var(--sticky-offset,0px);background:var(--paper);z-index:2;
 }
 .month-head h2{font-family:'Fraunces',serif;font-weight:600;font-size:20px}
 .month-head .mtotal{
