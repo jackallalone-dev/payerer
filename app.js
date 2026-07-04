@@ -409,6 +409,8 @@ document.getElementById("openSettings").addEventListener("click", ()=>{
   setmsg.className = "setmsg";
   setmsg.textContent = "";
   document.getElementById("exportText").style.display = "none";
+  document.getElementById("pasteFallback").style.display = "none";
+  document.getElementById("importPasteArea").value = "";
   settingsDialog.showModal();
   // dialogs auto-focus their first field; keep the keyboard closed
   if(document.activeElement) document.activeElement.blur();
@@ -419,33 +421,61 @@ document.getElementById("importBtn").addEventListener("click", ()=>{
   document.getElementById("importFile").click();
 });
 
+function doImport(text){
+  try{
+    const parsed = parseImport(text);
+    items = parsed.map(r=>({
+      id:newId(),
+      lender:r.lender, date:r.date, amount:r.amount, paid:false
+    }));
+    save();
+    render();
+    settingsDialog.close();
+    showToast(`Import completed — ${items.length} payments`, false);
+    return true;
+  }catch(err){
+    setmsg.className = "setmsg bad";
+    setmsg.textContent = "Import failed: " + err.message;
+    return false;
+  }
+}
+
 document.getElementById("importFile").addEventListener("change", e=>{
   const file = e.target.files[0];
   e.target.value = "";
   if(!file) return;
 
   const reader = new FileReader();
-  reader.onload = () => {
-    try{
-      const parsed = parseImport(reader.result);
-      items = parsed.map(r=>({
-        id:newId(),
-        lender:r.lender, date:r.date, amount:r.amount, paid:false
-      }));
-      save();
-      render();
-      settingsDialog.close();
-      showToast(`Import completed — ${items.length} payments`, false);
-    }catch(err){
-      setmsg.className = "setmsg bad";
-      setmsg.textContent = "Import failed: " + err.message;
-    }
-  };
+  reader.onload = () => doImport(reader.result);
   reader.onerror = () => {
     setmsg.className = "setmsg bad";
     setmsg.textContent = "Import failed: could not read the file.";
   };
   reader.readAsText(file);
+});
+
+document.getElementById("pasteImportBtn").addEventListener("click", async ()=>{
+  let text = "";
+  try{ text = await navigator.clipboard.readText(); }catch(e){}
+  if(text && text.trim()){
+    doImport(text);
+  }else{
+    // clipboard is blocked or empty: let the user paste manually
+    document.getElementById("pasteFallback").style.display = "block";
+    setmsg.className = "setmsg bad";
+    setmsg.textContent = "Couldn't read the clipboard — paste your data below instead.";
+    document.getElementById("importPasteArea").focus();
+  }
+});
+
+document.getElementById("importPastedBtn").addEventListener("click", ()=>{
+  const text = document.getElementById("importPasteArea").value;
+  if(!text.trim()){
+    setmsg.className = "setmsg bad";
+    setmsg.textContent = "Paste your data into the box first.";
+    return;
+  }
+  doImport(text);
 });
 
 function parseImport(text){
@@ -454,7 +484,7 @@ function parseImport(text){
     // convert single-quoted entries to valid JSON
     data = JSON.parse(text.trim().replace(/'/g, '"'));
   }catch(e){
-    throw new Error("file is not in the expected format.");
+    throw new Error("the data is not in the expected format.");
   }
   if(!Array.isArray(data) || data.length === 0)
     throw new Error("no payment entries found.");
