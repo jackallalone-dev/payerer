@@ -189,6 +189,21 @@ html[data-theme="dark"] .field select{
   padding:1px 5px;word-break:break-all;
 }
 .setting:last-child{margin-bottom:0}
+.switchrow{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.switch{position:relative;display:inline-block;width:46px;height:26px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0;position:absolute}
+.switch .slider{
+  position:absolute;inset:0;cursor:pointer;border-radius:26px;
+  background:var(--line);transition:background .2s;
+}
+.switch .slider::before{
+  content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;
+  border-radius:50%;background:var(--panel);transition:transform .2s;
+  box-shadow:0 1px 3px rgba(0,0,0,.25);
+}
+.switch input:checked + .slider{background:var(--accent)}
+.switch input:checked + .slider::before{transform:translateX(20px)}
+.switch input:focus-visible + .slider{outline:2px solid var(--ink);outline-offset:2px}
 .setmsg{font-size:13px;margin-top:12px;display:none}
 .setmsg.ok{color:var(--accent);display:block}
 .setmsg.bad{color:var(--danger);display:block}
