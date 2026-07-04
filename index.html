@@ -111,9 +111,16 @@
   </div>
   <div class="setting">
     <h4>Import data</h4>
-    <p class="desc">Load payments from a .txt file. Format: <code>[['Lender Name', 'MM-DD-YYYY', 1234.56],[...]]</code><br>Importing replaces all current payments.</p>
+    <p class="desc">Load payments from a .txt file or your clipboard. Format: <code>[['Lender Name', 'MM-DD-YYYY', 1234.56],[...]]</code><br>Importing replaces all current payments.</p>
     <input type="file" id="importFile" accept=".txt,text/plain" hidden>
-    <button class="btn" id="importBtn">Choose .txt file</button>
+    <div class="dlgactions" style="justify-content:flex-start;margin-top:0">
+      <button class="btn" id="importBtn">Choose .txt file</button>
+      <button class="btn ghost" id="pasteImportBtn">Paste from clipboard</button>
+    </div>
+    <div id="pasteFallback" style="display:none">
+      <textarea id="importPasteArea" placeholder="Paste your data here…" style="width:100%;margin-top:10px;height:120px;font-family:'IBM Plex Mono',monospace;font-size:11px;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);resize:vertical"></textarea>
+      <button class="btn" id="importPastedBtn" style="margin-top:8px">Import pasted text</button>
+    </div>
   </div>
   <div class="setting">
     <h4>Export data</h4>
