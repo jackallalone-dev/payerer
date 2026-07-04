@@ -28,10 +28,10 @@
     </div>
 
     <div class="summary">
-      <div class="cell"><div class="lbl">Total owed</div><div class="val" id="grand">—</div></div>
-      <div class="cell"><div class="lbl">Paid so far</div><div class="val" id="paid">—</div></div>
-      <div class="cell"><div class="lbl">Remaining</div><div class="val remaining" id="remaining">—</div></div>
-      <div class="cell"><div class="lbl">Payments</div><div class="val" id="count">—</div></div>
+      <div class="cell"><div class="lbl" id="lblGrand">Total owed</div><div class="val" id="grand">—</div></div>
+      <div class="cell"><div class="lbl" id="lblPaid">Paid so far</div><div class="val" id="paid">—</div></div>
+      <div class="cell"><div class="lbl" id="lblRemaining">Remaining</div><div class="val remaining" id="remaining">—</div></div>
+      <div class="cell"><div class="lbl" id="lblCount">Payments</div><div class="val" id="count">—</div></div>
     </div>
 
     <div class="addrow">
@@ -136,6 +136,18 @@
       <button class="btn ghost" id="copyBtn">Copy to clipboard</button>
     </div>
     <textarea id="exportText" readonly style="display:none;width:100%;margin-top:10px;height:120px;font-family:var(--font-mono);font-size:11px;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);resize:vertical"></textarea>
+  </div>
+  <div class="setting">
+    <div class="switchrow">
+      <div>
+        <h4>Super Secret Settings</h4>
+        <p class="desc" style="margin-bottom:0">Don't ask. Just flip it.</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="secretToggle" aria-label="Super Secret Settings">
+        <span class="slider"></span>
+      </label>
+    </div>
   </div>
   <p class="setmsg" id="setmsg"></p>
 </dialog>

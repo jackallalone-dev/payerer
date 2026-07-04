@@ -406,6 +406,38 @@ document.getElementById("titleDone").addEventListener("pointerdown", e=>{
 });
 applyTitle();
 
+/* ---------- super secret settings ---------- */
+const SECRET_KEY = "payment-schedule-secret";
+const secretToggle = document.getElementById("secretToggle");
+
+const NORMAL_LABELS = {
+  lblGrand:"Total owed", lblPaid:"Paid so far",
+  lblRemaining:"Remaining", lblCount:"Payments"
+};
+const SECRET_LABELS = {
+  lblGrand:"STOP RIGHT THERE!", lblPaid:"IS THIS ALL YOU GOT?!",
+  lblRemaining:"BRING ME DOWN!", lblCount:"0 IS BETTER THAN 1"
+};
+
+function secretOn(){
+  try{ return localStorage.getItem(SECRET_KEY) === "1"; }catch(e){ return false; }
+}
+
+function applySecret(){
+  const on = secretOn();
+  const labels = on ? SECRET_LABELS : NORMAL_LABELS;
+  for(const id in labels) document.getElementById(id).textContent = labels[id];
+  const addBtn = document.getElementById("openAdd");
+  addBtn.textContent = on ? "× Don't Click Me" : "+ Add payment";
+  addBtn.classList.toggle("danger", on);
+  secretToggle.checked = on;
+}
+
+secretToggle.addEventListener("change", ()=>{
+  try{ localStorage.setItem(SECRET_KEY, secretToggle.checked ? "1" : "0"); }catch(e){}
+  applySecret();
+});
+
 /* ---------- settings: import / export ---------- */
 const settingsDialog = document.getElementById("settingsDialog");
 const setmsg = document.getElementById("setmsg");
@@ -571,6 +603,7 @@ document.getElementById("copyBtn").addEventListener("click", async ()=>{
 /* ---------- init ---------- */
 load();
 render();
+applySecret();
 
 /* ---------- PWA: register service worker ---------- */
 if("serviceWorker" in navigator){
