@@ -388,6 +388,7 @@ function applyTitle(){
   document.getElementById("pageTitle").textContent = title;
   document.title = title;
   if(document.activeElement !== titleInput) titleInput.value = raw;
+  updateStickyOffset(); // a longer/shorter title can rewrap the header
 }
 titleInput.addEventListener("input", ()=>{
   try{ localStorage.setItem(TITLE_KEY, titleInput.value.slice(0,20)); }catch(e){}
@@ -400,6 +401,33 @@ document.getElementById("titleDone").addEventListener("pointerdown", e=>{
   titleInput.blur();
 });
 applyTitle();
+
+/* ---------- sticky summary ---------- */
+const STICKY_KEY = "payment-schedule-sticky";
+const stickyToggle = document.getElementById("stickySummary");
+
+function updateStickyOffset(){
+  // month heads stick right below the pinned header, which can change
+  // height when the title wraps or the viewport resizes
+  const h = document.body.classList.contains("sticky-summary")
+    ? document.querySelector("header").offsetHeight : 0;
+  document.documentElement.style.setProperty("--sticky-offset", h + "px");
+}
+
+function applySticky(){
+  let on = false;
+  try{ on = localStorage.getItem(STICKY_KEY) === "1"; }catch(e){}
+  document.body.classList.toggle("sticky-summary", on);
+  stickyToggle.checked = on;
+  updateStickyOffset();
+}
+
+stickyToggle.addEventListener("change", ()=>{
+  try{ localStorage.setItem(STICKY_KEY, stickyToggle.checked ? "1" : "0"); }catch(e){}
+  applySticky();
+});
+window.addEventListener("resize", updateStickyOffset);
+applySticky();
 
 /* ---------- settings: import / export ---------- */
 const settingsDialog = document.getElementById("settingsDialog");
