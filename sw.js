@@ -1,4 +1,4 @@
-const CACHE = "payerer-v5";
+const CACHE = "payerer-v6";
 const ASSETS = [
   "./",
   "./index.html",
@@ -27,19 +27,37 @@ self.addEventListener("activate", e => {
 
 self.addEventListener("fetch", e => {
   if (e.request.method !== "GET") return;
-  e.respondWith(
-    caches.match(e.request).then(hit =>
-      hit ||
+  const sameOrigin = new URL(e.request.url).origin === location.origin;
+
+  if (sameOrigin) {
+    // network-first: every online open shows the latest deploy immediately;
+    // the cache is only the offline fallback
+    e.respondWith(
       fetch(e.request).then(res => {
-        // runtime-cache successful responses (fonts, etc.) for offline use
-        if (res.ok || res.type === "opaque") {
+        if (res.ok) {
           const copy = res.clone();
           caches.open(CACHE).then(c => c.put(e.request, copy));
         }
         return res;
       }).catch(() =>
-        e.request.mode === "navigate" ? caches.match("./index.html") : Response.error()
+        caches.match(e.request).then(hit =>
+          hit || (e.request.mode === "navigate" ? caches.match("./index.html") : Response.error())
+        )
       )
-    )
-  );
+    );
+  } else {
+    // cross-origin (fonts): cache-first, they rarely change
+    e.respondWith(
+      caches.match(e.request).then(hit =>
+        hit ||
+        fetch(e.request).then(res => {
+          if (res.ok || res.type === "opaque") {
+            const copy = res.clone();
+            caches.open(CACHE).then(c => c.put(e.request, copy));
+          }
+          return res;
+        }).catch(() => Response.error())
+      )
+    );
+  }
 });
