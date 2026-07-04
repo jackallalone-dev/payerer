@@ -40,7 +40,13 @@ body{
   font-family:'Inter',system-ui,sans-serif;
   background:var(--paper);
   color:var(--ink);
-  padding:24px 16px 100px;
+  padding:calc(24px + env(safe-area-inset-top)) 16px 100px;
+}
+/* solid strip behind the iOS status bar so scrolled content can't show through */
+body::before{
+  content:"";position:fixed;top:0;left:0;right:0;
+  height:env(safe-area-inset-top);
+  background:var(--paper);z-index:40;pointer-events:none;
 }
 .wrap{max-width:820px;margin:0 auto}
 
@@ -185,7 +191,7 @@ html[data-theme="dark"] .field select{
 .month-head{
   display:flex;align-items:baseline;justify-content:space-between;
   padding:8px 0;border-bottom:2px solid var(--ink);
-  position:sticky;top:0;background:var(--paper);z-index:2;
+  position:sticky;top:env(safe-area-inset-top);background:var(--paper);z-index:2;
 }
 .month-head h2{font-family:'Fraunces',serif;font-weight:600;font-size:20px}
 .month-head .mtotal{
@@ -280,7 +286,7 @@ html[data-theme="dark"] .field select{
     top:0;left:0;transform:none;
     border-radius:0;box-shadow:none;
     background:var(--paper);
-    padding:20px 16px calc(24px + env(safe-area-inset-bottom));
+    padding:calc(20px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));
   }
   #settingsDialog::backdrop{background:var(--paper)}
   #settingsDialog .setting{background:var(--panel)}
