@@ -389,13 +389,13 @@ const titleInput = document.getElementById("titleInput");
 function applyTitle(){
   let raw = "";
   try{ raw = localStorage.getItem(TITLE_KEY) || ""; }catch(e){}
-  const title = (raw.trim() || DEFAULT_TITLE).slice(0,20);
+  const title = (raw.trim() || DEFAULT_TITLE).slice(0,30);
   document.getElementById("pageTitle").textContent = title;
   document.title = title;
   if(document.activeElement !== titleInput) titleInput.value = raw;
 }
 titleInput.addEventListener("input", ()=>{
-  try{ localStorage.setItem(TITLE_KEY, titleInput.value.slice(0,20)); }catch(e){}
+  try{ localStorage.setItem(TITLE_KEY, titleInput.value.slice(0,30)); }catch(e){}
   applyTitle();
 });
 // pointerdown (not click): on mobile the input's blur would hide the
