@@ -1,4 +1,7 @@
 :root{
+  --font-sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --font-serif:ui-serif,Georgia,"Times New Roman",serif;
+  --font-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
   --ink:#1b2430;
   --paper:#f6f7f4;
   --panel:#ffffff;
@@ -37,7 +40,7 @@ html[data-theme="dark"]{
 *{scrollbar-width:none;-ms-overflow-style:none}
 *::-webkit-scrollbar{display:none;width:0;height:0}
 body{
-  font-family:'Inter',system-ui,sans-serif;
+  font-family:var(--font-sans);
   background:var(--paper);
   color:var(--ink);
   padding:calc(24px + env(safe-area-inset-top)) 16px 100px;
@@ -54,7 +57,7 @@ header{margin-bottom:28px}
 .titlerow{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .titlerow .iconbtn{flex-shrink:0}
 h1{
-  font-family:'Fraunces',serif;font-weight:700;
+  font-family:var(--font-serif);font-weight:700;
   font-size:clamp(26px,5vw,38px);letter-spacing:-0.01em;
   min-width:0;overflow-wrap:anywhere;
 }
@@ -86,7 +89,7 @@ h1{
 .summary .cell{background:var(--panel);padding:14px 16px}
 .cell .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
 .cell .val{
-  font-family:'IBM Plex Mono',monospace;
+  font-family:var(--font-mono);
   font-size:20px;font-weight:600;margin-top:4px;
   font-variant-numeric:tabular-nums;
 }
@@ -118,7 +121,7 @@ dialog::backdrop{
   -webkit-backdrop-filter:blur(6px);
   backdrop-filter:blur(6px);
 }
-dialog h3{font-family:'Fraunces',serif;font-size:19px;margin-bottom:16px}
+dialog h3{font-family:var(--font-serif);font-size:19px;margin-bottom:16px}
 .settings-head{
   display:flex;align-items:center;justify-content:space-between;
   gap:12px;margin-bottom:16px;
@@ -166,7 +169,7 @@ html[data-theme="dark"] .field select{
 .delsummary{
   background:var(--paper);border:1px solid var(--line);border-radius:8px;
   padding:12px 14px;font-size:14px;line-height:1.5;
-  font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;
+  font-family:var(--font-mono);font-variant-numeric:tabular-nums;
 }
 .delsummary strong{font-weight:600}
 .delnote{font-size:13px;color:var(--muted);margin-top:10px}
@@ -181,7 +184,7 @@ html[data-theme="dark"] .field select{
   font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.5;
 }
 .setting .desc code{
-  font-family:'IBM Plex Mono',monospace;font-size:11px;
+  font-family:var(--font-mono);font-size:11px;
   background:var(--paper);border:1px solid var(--line);border-radius:4px;
   padding:1px 5px;word-break:break-all;
 }
@@ -197,9 +200,9 @@ html[data-theme="dark"] .field select{
   padding:8px 0;border-bottom:2px solid var(--ink);
   position:sticky;top:env(safe-area-inset-top);background:var(--paper);z-index:2;
 }
-.month-head h2{font-family:'Fraunces',serif;font-weight:600;font-size:20px}
+.month-head h2{font-family:var(--font-serif);font-weight:600;font-size:20px}
 .month-head .mtotal{
-  font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600;
+  font-family:var(--font-mono);font-size:15px;font-weight:600;
   font-variant-numeric:tabular-nums;
 }
 
@@ -208,7 +211,7 @@ html[data-theme="dark"] .field select{
   border-bottom:1px solid var(--line);padding:14px 0;
 }
 .dategroup:last-child{border-bottom:none}
-.datecol{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;padding-top:6px}
+.datecol{font-family:var(--font-mono);font-size:13px;font-weight:600;padding-top:6px}
 .datecol .day{font-size:22px;display:block;line-height:1}
 .datecol .dow{color:var(--muted);font-weight:400;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
 
@@ -242,7 +245,7 @@ html[data-theme="dark"] .field select{
 .pay input{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex-shrink:0}
 .pay .lender{font-size:12px;font-weight:600;min-width:86px;flex-shrink:0;pointer-events:none}
 .pay .amt{
-  margin-left:auto;font-family:'IBM Plex Mono',monospace;
+  margin-left:auto;font-family:var(--font-mono);
   font-size:14px;font-weight:500;font-variant-numeric:tabular-nums;
   pointer-events:none;
 }
@@ -251,7 +254,7 @@ html[data-theme="dark"] .field select{
 
 .datetotal{
   grid-column:2;text-align:right;
-  font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);
+  font-family:var(--font-mono);font-size:12px;color:var(--muted);
   margin-top:6px;font-variant-numeric:tabular-nums;
 }
 

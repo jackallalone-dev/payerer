@@ -12,8 +12,6 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -126,7 +124,7 @@
       <button class="btn ghost" id="pasteImportBtn">Paste from clipboard</button>
     </div>
     <div id="pasteFallback" style="display:none">
-      <textarea id="importPasteArea" placeholder="Paste your data here…" style="width:100%;margin-top:10px;height:120px;font-family:'IBM Plex Mono',monospace;font-size:11px;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);resize:vertical"></textarea>
+      <textarea id="importPasteArea" placeholder="Paste your data here…" style="width:100%;margin-top:10px;height:120px;font-family:var(--font-mono);font-size:11px;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);resize:vertical"></textarea>
       <button class="btn" id="importPastedBtn" style="margin-top:8px">Import pasted text</button>
     </div>
   </div>
@@ -137,7 +135,7 @@
       <button class="btn ghost" id="exportBtn">Download .txt</button>
       <button class="btn ghost" id="copyBtn">Copy to clipboard</button>
     </div>
-    <textarea id="exportText" readonly style="display:none;width:100%;margin-top:10px;height:120px;font-family:'IBM Plex Mono',monospace;font-size:11px;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);resize:vertical"></textarea>
+    <textarea id="exportText" readonly style="display:none;width:100%;margin-top:10px;height:120px;font-family:var(--font-mono);font-size:11px;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);resize:vertical"></textarea>
   </div>
   <p class="setmsg" id="setmsg"></p>
 </dialog>
