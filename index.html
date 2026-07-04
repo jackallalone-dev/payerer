@@ -113,6 +113,14 @@
     border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);
   }
   .field input:focus,.field select:focus{outline:2px solid var(--accent);outline-offset:1px}
+  .inputrow{display:flex;align-items:stretch;gap:8px}
+  .inputrow input{
+    flex:1;min-width:0;
+    font:inherit;font-size:14px;padding:9px 10px;
+    border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);
+  }
+  .inputrow input:focus{outline:2px solid var(--accent);outline-offset:1px}
+  .inputrow .iconbtn{height:auto;flex-shrink:0}
   #newLenderField{display:none}
   .dlgactions{display:flex;gap:8px;margin-top:18px;justify-content:flex-end}
   .formerr{color:var(--danger);font-size:13px;margin-top:12px;display:none}
@@ -311,8 +319,13 @@
   <div class="setting">
     <h4>Title</h4>
     <p class="desc">Shown at the top of the page. Up to 20 characters.</p>
-    <div class="field">
+    <div class="inputrow">
       <input type="text" id="titleInput" maxlength="20" placeholder="Payment Schedule">
+      <button class="iconbtn" id="titleDone" title="Done" aria-label="Done editing title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </button>
     </div>
   </div>
   <div class="setting">
@@ -748,6 +761,10 @@ function applyTitle(){
 titleInput.addEventListener("input", ()=>{
   try{ localStorage.setItem(TITLE_KEY, titleInput.value.slice(0,20)); }catch(e){}
   applyTitle();
+});
+document.getElementById("titleDone").addEventListener("click", ()=>{
+  titleInput.blur();
+  if(document.activeElement) document.activeElement.blur();
 });
 applyTitle();
 
