@@ -249,4 +249,16 @@ dialog h3{font-family:'Fraunces',serif;font-size:19px;margin-bottom:16px}
   .dategroup{grid-template-columns:64px 1fr}
   .pay .lender{min-width:64px}
   .fields{grid-template-columns:1fr}
+
+  /* settings becomes a full screen instead of a dialog */
+  #settingsDialog{
+    width:100vw;max-width:100vw;
+    height:100vh;height:100dvh;max-height:none;
+    top:0;left:0;transform:none;
+    border-radius:0;box-shadow:none;
+    background:var(--paper);
+    padding:20px 16px calc(24px + env(safe-area-inset-bottom));
+  }
+  #settingsDialog::backdrop{background:var(--paper)}
+  #settingsDialog .setting{background:var(--panel)}
 }
