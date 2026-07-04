@@ -405,6 +405,105 @@ document.getElementById("titleDone").addEventListener("pointerdown", e=>{
 });
 applyTitle();
 
+/* ---------- due reminders ---------- */
+const NOTIFY_KEY = "payment-schedule-notify";     // "off" or lead days as a string
+const NOTIFIED_KEY = "payment-schedule-notified"; // date we last showed a reminder
+const notifySelect = document.getElementById("notifySelect");
+const notifyStatus = document.getElementById("notifyStatus");
+
+const localToday = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+};
+
+function notifyLeadDays(){
+  let v = "off";
+  try{ v = localStorage.getItem(NOTIFY_KEY) || "off"; }catch(e){}
+  const days = parseInt(v, 10);
+  return Number.isFinite(days) && days >= 0 ? days : null;
+}
+
+function dueLabel(dateStr){
+  const diff = Math.round((new Date(dateStr+"T00:00:00") - new Date(localToday()+"T00:00:00")) / 86400000);
+  if(diff < 0) return diff === -1 ? "1 day overdue" : `${-diff} days overdue`;
+  if(diff === 0) return "due today";
+  if(diff === 1) return "due tomorrow";
+  return `due ${prettyDate(dateStr)}`;
+}
+
+async function checkDueNotifications(){
+  const lead = notifyLeadDays();
+  if(lead === null) return;
+  if(!("Notification" in window) || Notification.permission !== "granted") return;
+
+  let last = "";
+  try{ last = localStorage.getItem(NOTIFIED_KEY) || ""; }catch(e){}
+  if(last === localToday()) return; // at most one reminder per day
+
+  const limit = new Date(localToday()+"T00:00:00");
+  limit.setDate(limit.getDate() + lead);
+  const due = items
+    .filter(p => !p.paid && new Date(p.date+"T00:00:00") <= limit)
+    .sort((a,b) => a.date.localeCompare(b.date));
+  if(due.length === 0) return;
+
+  const title = due.length === 1
+    ? `Payment ${dueLabel(due[0].date)}`
+    : `${due.length} payments due soon`;
+  const lines = due.slice(0,4).map(p => `${p.lender} ₱${fmt(p.amount)} — ${dueLabel(p.date)}`);
+  if(due.length > 4) lines.push(`…and ${due.length-4} more`);
+  const opts = { body: lines.join("\n"), icon: "icons/icon-192.png", tag: "payment-due" };
+
+  try{
+    const reg = "serviceWorker" in navigator
+      ? await navigator.serviceWorker.getRegistration()
+      : null;
+    if(reg && reg.showNotification){
+      await reg.showNotification(title, opts);
+    }else{
+      new Notification(title, opts);
+    }
+    try{ localStorage.setItem(NOTIFIED_KEY, localToday()); }catch(e){}
+  }catch(e){}
+}
+
+function refreshNotifyUI(){
+  let pref = "off";
+  try{ pref = localStorage.getItem(NOTIFY_KEY) || "off"; }catch(e){}
+  if(![...notifySelect.options].some(o => o.value === pref)) pref = "off";
+  notifySelect.value = pref;
+
+  if(pref === "off"){
+    notifyStatus.textContent = "";
+  }else if(!("Notification" in window)){
+    notifyStatus.textContent = "Notifications aren't supported here. On iPhone, add the app to your Home Screen first.";
+  }else if(Notification.permission === "denied"){
+    notifyStatus.textContent = "Notifications are blocked — allow them in your browser settings to get reminders.";
+  }else if(Notification.permission === "granted"){
+    notifyStatus.textContent = "Reminders are on. You'll get one when you open the app and something is due.";
+  }else{
+    notifyStatus.textContent = "";
+  }
+}
+
+notifySelect.addEventListener("change", async ()=>{
+  const v = notifySelect.value;
+  try{ localStorage.setItem(NOTIFY_KEY, v); }catch(e){}
+  if(v !== "off" && "Notification" in window && Notification.permission === "default"){
+    try{ await Notification.requestPermission(); }catch(e){}
+  }
+  refreshNotifyUI();
+  if(v !== "off"){
+    // let the new setting take effect right away
+    try{ localStorage.removeItem(NOTIFIED_KEY); }catch(e){}
+    checkDueNotifications();
+  }
+});
+
+document.addEventListener("visibilitychange", ()=>{
+  if(!document.hidden) checkDueNotifications();
+});
+
 /* ---------- settings: import / export ---------- */
 const settingsDialog = document.getElementById("settingsDialog");
 const setmsg = document.getElementById("setmsg");
@@ -415,6 +514,7 @@ document.getElementById("openSettings").addEventListener("click", ()=>{
   document.getElementById("exportText").style.display = "none";
   document.getElementById("pasteFallback").style.display = "none";
   document.getElementById("importPasteArea").value = "";
+  refreshNotifyUI();
   settingsDialog.showModal();
   // dialogs auto-focus their first field; keep the keyboard closed
   if(document.activeElement) document.activeElement.blur();
@@ -570,6 +670,8 @@ document.getElementById("copyBtn").addEventListener("click", async ()=>{
 /* ---------- init ---------- */
 load();
 render();
+refreshNotifyUI();
+checkDueNotifications();
 
 /* ---------- PWA: register service worker ---------- */
 if("serviceWorker" in navigator){

@@ -118,6 +118,20 @@
     </div>
   </div>
   <div class="setting">
+    <h4>Due reminders</h4>
+    <p class="desc">Get a notification when you open the app and a payment is overdue or coming up.</p>
+    <div class="field">
+      <select id="notifySelect">
+        <option value="off">Off</option>
+        <option value="0">On the due date</option>
+        <option value="1">1 day before</option>
+        <option value="3">3 days before</option>
+        <option value="7">7 days before</option>
+      </select>
+    </div>
+    <p class="desc" id="notifyStatus"></p>
+  </div>
+  <div class="setting">
     <h4>Import data</h4>
     <p class="desc">Load payments from a .txt file or your clipboard. Format: <code>[['Lender Name', 'MM-DD-YYYY', 1234.56],[...]]</code><br>Importing replaces all current payments.</p>
     <input type="file" id="importFile" accept=".txt,text/plain" hidden>
