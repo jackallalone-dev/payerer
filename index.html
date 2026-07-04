@@ -120,7 +120,12 @@
     border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);
   }
   .inputrow input:focus{outline:2px solid var(--accent);outline-offset:1px}
-  .inputrow .iconbtn{height:auto;flex-shrink:0}
+  .inputrow .iconbtn{
+    height:auto;flex-shrink:0;display:none;
+    background:var(--accent);border:none;color:#fff;
+  }
+  .inputrow .iconbtn:hover{color:#fff}
+  .inputrow:focus-within .iconbtn{display:inline-flex}
   #newLenderField{display:none}
   .dlgactions{display:flex;gap:8px;margin-top:18px;justify-content:flex-end}
   .formerr{color:var(--danger);font-size:13px;margin-top:12px;display:none}
@@ -762,9 +767,11 @@ titleInput.addEventListener("input", ()=>{
   try{ localStorage.setItem(TITLE_KEY, titleInput.value.slice(0,20)); }catch(e){}
   applyTitle();
 });
-document.getElementById("titleDone").addEventListener("click", ()=>{
+// pointerdown (not click): on mobile the input's blur would hide the
+// button before a click event could fire
+document.getElementById("titleDone").addEventListener("pointerdown", e=>{
+  e.preventDefault();
   titleInput.blur();
-  if(document.activeElement) document.activeElement.blur();
 });
 applyTitle();
 
