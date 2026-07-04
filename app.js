@@ -563,13 +563,6 @@ document.getElementById("copyBtn").addEventListener("click", async ()=>{
   }
 });
 
-/* close dialogs when clicking the backdrop */
-[payDialog, deleteDialog, settingsDialog].forEach(dlg=>{
-  dlg.addEventListener("click", e=>{
-    if(e.target === dlg) dlg.close();
-  });
-});
-
 /* ---------- init ---------- */
 load();
 render();
