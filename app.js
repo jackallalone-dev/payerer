@@ -132,7 +132,8 @@ function refreshTotals(){
   document.getElementById("grand").textContent = "₱" + fmt(grandTotal);
   document.getElementById("paid").textContent = "₱" + fmt(paid);
   document.getElementById("remaining").textContent = "₱" + fmt(grandTotal - paid);
-  document.getElementById("count").textContent = items.length;
+  const unpaidCount = items.filter(p=>!p.paid).length;
+  document.getElementById("count").textContent = `${unpaidCount}/${items.length}`;
 }
 
 /* ---------- checkbox ---------- */
