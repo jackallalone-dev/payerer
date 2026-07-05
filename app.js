@@ -83,7 +83,7 @@ function render(){
       const d = new Date(dateStr + "T00:00:00");
       const g = document.createElement("div");
       g.className = "dategroup";
-      const dTotal = list.reduce((s,p)=>s+p.amount,0);
+      const dRemaining = list.reduce((s,p)=>s+(p.paid?0:p.amount),0);
       g.innerHTML = `<div class="datecol">
           <span class="day">${d.getDate()}</span>
           <span class="dow">${DOW[d.getDay()]}</span>
@@ -100,7 +100,7 @@ function render(){
               </div>
             </div>`).join("")}
         </div>
-        ${list.length>1 ? `<div class="datetotal">Total ₱${fmt(dTotal)}</div>` : ""}`;
+        ${list.length>1 ? `<div class="datetotal" data-date="${dateStr}">Remaining ₱${fmt(dRemaining)}</div>` : ""}`;
       sec.appendChild(g);
     }
     main.appendChild(sec);
@@ -136,6 +136,13 @@ function refreshTotals(){
   document.getElementById("count").textContent = `${unpaidCount}/${items.length}`;
 }
 
+function refreshDateRemaining(dateStr){
+  const el = document.querySelector(`.datetotal[data-date="${dateStr}"]`);
+  if(!el) return;
+  const rem = items.filter(p=>p.date===dateStr && !p.paid).reduce((s,p)=>s+p.amount,0);
+  el.textContent = `Remaining ₱${fmt(rem)}`;
+}
+
 /* ---------- checkbox ---------- */
 document.getElementById("schedule").addEventListener("change", e=>{
   if(e.target.matches("input[type=checkbox]")){
@@ -144,6 +151,7 @@ document.getElementById("schedule").addEventListener("change", e=>{
     e.target.closest(".pay").classList.toggle("done", e.target.checked);
     save();
     refreshTotals();
+    refreshDateRemaining(item.date);
   }
 });
 
