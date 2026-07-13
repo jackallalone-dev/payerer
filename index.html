@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="stylesheet" href="styles.css?v=16">
+<link rel="stylesheet" href="styles.css?v=17">
 </head>
 <body>
 <div class="wrap">
@@ -35,10 +35,10 @@
     </div>
 
     <div class="addrow">
-      <button class="btn ghost withicon" id="openOverview" style="display:none">
+      <button class="iconbtn" id="openOverview" title="All payments" aria-label="All payments" style="display:none">
         <!-- width/height attributes: the icon must stay small even if an
-             outdated cached stylesheet without .withicon rules loads -->
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+             outdated cached stylesheet loads -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="8" y1="6" x2="21" y2="6"></line>
           <line x1="8" y1="12" x2="21" y2="12"></line>
           <line x1="8" y1="18" x2="21" y2="18"></line>
@@ -46,7 +46,6 @@
           <line x1="3" y1="12" x2="3.01" y2="12"></line>
           <line x1="3" y1="18" x2="3.01" y2="18"></line>
         </svg>
-        All payments
       </button>
       <button class="btn" id="openAdd">+ Add payment</button>
     </div>
@@ -229,6 +228,6 @@
   <button class="undo" id="undoBtn">Undo</button>
 </div>
 
-<script src="app.js?v=16"></script>
+<script src="app.js?v=17"></script>
 </body>
 </html>
