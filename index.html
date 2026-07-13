@@ -62,6 +62,33 @@
       <label for="fAmount">Amount (₱)</label>
       <input type="number" id="fAmount" min="0.01" step="0.01" placeholder="0.00">
     </div>
+    <div class="field full" id="repeatField">
+      <label for="fRepeat">Repeat</label>
+      <select id="fRepeat">
+        <option value="none">Does not repeat</option>
+        <option value="monthly">Once a month</option>
+        <option value="twice">Twice a month</option>
+      </select>
+    </div>
+    <div class="field full" id="secondDayField">
+      <label for="fSecondDay">Day of month for 2nd payment</label>
+      <input type="number" id="fSecondDay" min="1" max="31" step="1" placeholder="e.g. 15">
+    </div>
+    <div class="field" id="endTypeField">
+      <label for="fEndType">Ends</label>
+      <select id="fEndType">
+        <option value="count">After # of payments</option>
+        <option value="date">On a date</option>
+      </select>
+    </div>
+    <div class="field" id="endCountField">
+      <label for="fEndCount">Total payments</label>
+      <input type="number" id="fEndCount" min="1" max="120" step="1" placeholder="e.g. 12">
+    </div>
+    <div class="field" id="endDateField">
+      <label for="fEndDate">End date</label>
+      <input type="date" id="fEndDate">
+    </div>
   </div>
   <p class="formerr" id="formerr"></p>
   <div class="dlgactions">
