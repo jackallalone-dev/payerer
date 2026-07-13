@@ -131,13 +131,14 @@ dialog h3{font-family:var(--font-serif);font-size:19px;margin-bottom:16px}
 .field{display:flex;flex-direction:column;gap:4px}
 .field.full{grid-column:1 / -1}
 .field label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-.field input,.field select{
+.field input,.field select,.ov-controls input,.ov-controls select{
   font:inherit;font-size:14px;padding:9px 10px;
   border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);
 }
-.field input:focus,.field select:focus{outline:2px solid var(--accent);outline-offset:1px}
+.field input:focus,.field select:focus,
+.ov-controls input:focus,.ov-controls select:focus{outline:2px solid var(--accent);outline-offset:1px}
 /* custom chevron: native select arrows sit flush against the right border */
-.field select{
+.field select,.ov-controls select{
   appearance:none;
   -webkit-appearance:none;
   padding-right:38px;
@@ -146,7 +147,8 @@ dialog h3{font-family:var(--font-serif);font-size:19px;margin-bottom:16px}
   background-position:right 12px center;
   background-size:16px 16px;
 }
-html[data-theme="dark"] .field select{
+html[data-theme="dark"] .field select,
+html[data-theme="dark"] .ov-controls select{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238d97a4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
 }
 .inputrow{display:flex;align-items:stretch;gap:8px}
@@ -271,6 +273,42 @@ html[data-theme="dark"] .field select{
   grid-column:2;text-align:right;
   font-family:var(--font-mono);font-size:12px;color:var(--muted);
   margin-top:6px;font-variant-numeric:tabular-nums;
+}
+
+/* ---------- overview page ---------- */
+.titlebtns{display:flex;gap:8px;flex-shrink:0}
+.ov-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.ov-head h2{
+  font-family:var(--font-serif);font-weight:700;
+  font-size:clamp(22px,4.5vw,30px);letter-spacing:-0.01em;
+}
+.ov-controls{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+.ov-selects{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#ovDir{font-size:14px;padding:9px 10px;white-space:nowrap}
+.ov-stats{
+  font-family:var(--font-mono);font-size:12px;color:var(--muted);
+  margin:6px 2px 14px;font-variant-numeric:tabular-nums;
+}
+#overviewList{display:flex;flex-direction:column;gap:6px}
+.ov-row{
+  display:flex;align-items:center;gap:10px;
+  background:var(--panel);border:1px solid var(--line);border-radius:8px;
+  padding:10px 12px;cursor:pointer;
+}
+.ov-row input{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex-shrink:0}
+.ov-main{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ov-row .lender{font-size:13px;font-weight:600;overflow-wrap:anywhere}
+.ov-date{font-family:var(--font-mono);font-size:11px;color:var(--muted)}
+.ov-row .amt{
+  margin-left:auto;font-family:var(--font-mono);
+  font-size:14px;font-weight:500;font-variant-numeric:tabular-nums;flex-shrink:0;
+}
+.ov-row.done{opacity:.6}
+.ov-row.done .amt{text-decoration:line-through}
+@media (min-width:640px){
+  .ov-controls{flex-direction:row}
+  .ov-controls input[type=search]{flex:1;min-width:160px}
+  .ov-selects{grid-template-columns:auto auto auto auto}
 }
 
 /* toast */

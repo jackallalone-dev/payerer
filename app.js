@@ -107,6 +107,7 @@ function render(){
   }
 
   refreshTotals();
+  if(location.hash === "#overview") renderOverview();
 }
 
 function buildLenderDropdown(){
@@ -687,10 +688,127 @@ document.getElementById("copyBtn").addEventListener("click", async ()=>{
   }
 });
 
+/* ---------- overview page ---------- */
+const overviewPage = document.getElementById("overviewPage");
+const ovSearch = document.getElementById("ovSearch");
+const ovLender = document.getElementById("ovLender");
+const ovStatus = document.getElementById("ovStatus");
+const ovSort = document.getElementById("ovSort");
+const ovDir = document.getElementById("ovDir");
+let ovAsc = true;
+let ovFromButton = false;
+
+function overviewOpen(){ return location.hash === "#overview"; }
+
+function updateView(){
+  const on = overviewOpen();
+  document.querySelector("header").style.display = on ? "none" : "";
+  document.getElementById("schedule").style.display = on ? "none" : "";
+  overviewPage.style.display = on ? "" : "none";
+  if(on) renderOverview();
+  else ovFromButton = false;
+}
+window.addEventListener("hashchange", updateView);
+
+document.getElementById("openOverview").addEventListener("click", ()=>{
+  ovFromButton = true;
+  location.hash = "overview";
+});
+document.getElementById("closeOverview").addEventListener("click", ()=>{
+  // prefer back() so the browser history stays clean, but only when the
+  // overview was entered from within the app
+  if(ovFromButton) history.back();
+  else location.hash = "";
+});
+
+function buildOvLenderDropdown(){
+  const prev = ovLender.value;
+  ovLender.innerHTML = `<option value="">All lenders</option>`;
+  for(const name of Object.keys(lenderColors())){
+    const o = document.createElement("option");
+    o.value = o.textContent = name;
+    ovLender.appendChild(o);
+  }
+  if([...ovLender.options].some(o=>o.value===prev)) ovLender.value = prev;
+}
+
+function renderOverview(){
+  buildOvLenderDropdown();
+  const colors = lenderColors();
+  const q = ovSearch.value.trim().toLowerCase();
+
+  const list = items.filter(p =>
+    (!q || p.lender.toLowerCase().includes(q)) &&
+    (!ovLender.value || p.lender === ovLender.value) &&
+    (ovStatus.value === "all" || (ovStatus.value === "paid") === !!p.paid)
+  );
+
+  const dir = ovAsc ? 1 : -1;
+  const key = ovSort.value;
+  list.sort((a,b)=>{
+    let c = 0;
+    if(key === "amount") c = a.amount - b.amount;
+    else if(key === "lender") c = a.lender.localeCompare(b.lender);
+    else if(key === "status") c = (a.paid?1:0) - (b.paid?1:0);
+    return dir * (c || a.date.localeCompare(b.date)) || a.lender.localeCompare(b.lender);
+  });
+
+  const total = list.reduce((s,p)=>s+p.amount,0);
+  const rem = list.reduce((s,p)=>s+(p.paid?0:p.amount),0);
+  document.getElementById("ovStats").textContent = list.length
+    ? `${list.length} payment${list.length===1?"":"s"} · ₱${fmt(total)} total · ₱${fmt(rem)} remaining`
+    : "";
+
+  const box = document.getElementById("overviewList");
+  if(list.length === 0){
+    box.innerHTML = `<div class="empty">${items.length ? "No payments match these filters." : "No payments yet."}</div>`;
+    return;
+  }
+  box.innerHTML = list.map(p=>`
+    <div class="ov-row ${p.paid?'done':''}" data-id="${p.id}">
+      <input type="checkbox" data-id="${p.id}" ${p.paid?'checked':''} aria-label="Mark paid">
+      <div class="ov-main">
+        <span class="lender" style="color:${colors[p.lender]}">${p.lender}</span>
+        <span class="ov-date">${prettyDate(p.date)}</span>
+      </div>
+      <span class="amt">₱${fmt(p.amount)}</span>
+    </div>`).join("");
+}
+
+ovSearch.addEventListener("input", renderOverview);
+ovLender.addEventListener("change", renderOverview);
+ovStatus.addEventListener("change", renderOverview);
+ovSort.addEventListener("change", renderOverview);
+ovDir.addEventListener("click", ()=>{
+  ovAsc = !ovAsc;
+  ovDir.textContent = ovAsc ? "↑ Ascending" : "↓ Descending";
+  renderOverview();
+});
+
+document.getElementById("overviewList").addEventListener("change", e=>{
+  if(!e.target.matches("input[type=checkbox]")) return;
+  const item = items.find(p=>p.id===e.target.dataset.id);
+  if(!item) return;
+  item.paid = e.target.checked;
+  save();
+  render();
+});
+
+document.getElementById("overviewList").addEventListener("click", e=>{
+  if(e.target.matches("input[type=checkbox]")) return;
+  const row = e.target.closest(".ov-row");
+  if(row) openPayDialog("edit", row.dataset.id);
+});
+
+// the button is hidden in the markup so a stale cached script can't
+// leave a dead button in the header
+document.getElementById("openOverview").style.display = "";
+
 /* ---------- init ---------- */
 load();
 render();
 applySecret();
+updateView();
 
 /* ---------- PWA: register service worker ---------- */
 if("serviceWorker" in navigator){

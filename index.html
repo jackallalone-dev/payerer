@@ -19,12 +19,24 @@
   <header>
     <div class="titlerow">
       <h1 id="pageTitle">Payment Schedule</h1>
+      <div class="titlebtns">
+      <button class="iconbtn" id="openOverview" title="All payments" aria-label="All payments" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6"></line>
+            <line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="21" y2="18"></line>
+            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+          </svg>
+      </button>
       <button class="iconbtn" id="openSettings" title="Settings" aria-label="Settings">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"></circle>
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
           </svg>
       </button>
+      </div>
     </div>
 
     <div class="summary">
@@ -40,6 +52,38 @@
   </header>
 
   <main id="schedule"></main>
+
+  <!-- All payments overview -->
+  <section id="overviewPage" style="display:none">
+    <div class="ov-head">
+      <button class="iconbtn" id="closeOverview" title="Back" aria-label="Back to schedule">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+      <h2>All payments</h2>
+    </div>
+    <div class="ov-controls">
+      <input type="search" id="ovSearch" placeholder="Search lender…" aria-label="Search lender">
+      <div class="ov-selects">
+        <select id="ovLender" aria-label="Filter by lender"><option value="">All lenders</option></select>
+        <select id="ovStatus" aria-label="Filter by status">
+          <option value="all">All statuses</option>
+          <option value="unpaid">Unpaid</option>
+          <option value="paid">Paid</option>
+        </select>
+        <select id="ovSort" aria-label="Sort by">
+          <option value="date">Sort: date</option>
+          <option value="amount">Sort: amount</option>
+          <option value="lender">Sort: lender</option>
+          <option value="status">Sort: status</option>
+        </select>
+        <button class="btn ghost" id="ovDir" title="Toggle sort direction">↑ Ascending</button>
+      </div>
+    </div>
+    <div class="ov-stats" id="ovStats"></div>
+    <div id="overviewList"></div>
+  </section>
 </div>
 
 <!-- Add / Edit payment dialog -->
