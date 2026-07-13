@@ -1,5 +1,5 @@
 // keep in sync with the ?v= query on styles.css / app.js in index.html
-const VERSION = "16";
+const VERSION = "17";
 const CACHE = "payerer-v" + VERSION;
 const ASSETS = [
   "./",
