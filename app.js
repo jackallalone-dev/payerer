@@ -299,10 +299,48 @@ document.getElementById("undoBtn").addEventListener("click", ()=>{
 const payDialog = document.getElementById("payDialog");
 let editingId = null;
 
+function updateRepeatVisibility(){
+  const repeat = document.getElementById("fRepeat").value;
+  const endType = document.getElementById("fEndType").value;
+  const recurring = repeat !== "none";
+  document.getElementById("secondDayField").style.display = repeat === "twice" ? "flex" : "none";
+  document.getElementById("endTypeField").style.display = recurring ? "flex" : "none";
+  document.getElementById("endCountField").style.display = recurring && endType === "count" ? "flex" : "none";
+  document.getElementById("endDateField").style.display = recurring && endType === "date" ? "flex" : "none";
+}
+document.getElementById("fRepeat").addEventListener("change", updateRepeatVisibility);
+document.getElementById("fEndType").addEventListener("change", updateRepeatVisibility);
+
+/* Build the list of due dates for a recurring payment. Day-of-month anchors
+   are clamped to the last day of shorter months (e.g. 31 → Feb 28). */
+const MAX_RECURRING = 120;
+function buildRecurringDates(startISO, repeat, secondDay, endType, endCount, endISO){
+  const [sy, sm, sd] = startISO.split("-").map(Number);
+  const anchors = repeat === "twice" ? [sd, secondDay] : [sd];
+  const limit = endType === "count" ? Math.min(endCount, MAX_RECURRING) : MAX_RECURRING;
+  const dates = [];
+  for(let k = 0; ; k++){
+    const y = sy + Math.floor((sm - 1 + k) / 12);
+    const m = (sm - 1 + k) % 12;
+    const lastDay = new Date(y, m + 1, 0).getDate();
+    const monthDates = [...new Set(anchors.map(d => Math.min(d, lastDay)))]
+      .sort((a,b)=>a-b)
+      .map(d => `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`);
+    for(const ds of monthDates){
+      if(ds < startISO) continue;
+      if(endType === "date" && ds > endISO) return dates;
+      dates.push(ds);
+      if(dates.length >= limit) return dates;
+    }
+  }
+}
+
 function openPayDialog(mode, id){
   buildLenderDropdown();
   clearForm();
-  if(mode === "edit"){
+  const isEdit = mode === "edit";
+  document.getElementById("repeatField").style.display = isEdit ? "none" : "flex";
+  if(isEdit){
     const item = items.find(p=>p.id===id);
     if(!item) return;
     editingId = id;
@@ -331,6 +369,12 @@ function clearForm(){
   document.getElementById("fNewLender").value = "";
   document.getElementById("fDate").value = "";
   document.getElementById("fAmount").value = "";
+  document.getElementById("fRepeat").value = "none";
+  document.getElementById("fSecondDay").value = "";
+  document.getElementById("fEndType").value = "count";
+  document.getElementById("fEndCount").value = "";
+  document.getElementById("fEndDate").value = "";
+  updateRepeatVisibility();
   document.getElementById("formerr").style.display = "none";
   document.getElementById("newLenderField").style.display = "none";
   const sel = document.getElementById("fLender");
@@ -359,7 +403,42 @@ document.getElementById("savePay").addEventListener("click", ()=>{
     item.amount = amount;
     editingId = null;
   }else{
-    items.push({ id:newId(), lender, date, amount, paid:false });
+    const repeat = document.getElementById("fRepeat").value;
+    if(repeat === "none"){
+      items.push({ id:newId(), lender, date, amount, paid:false });
+    }else{
+      const secondDay = parseInt(document.getElementById("fSecondDay").value, 10);
+      const endType = document.getElementById("fEndType").value;
+      const endCount = parseInt(document.getElementById("fEndCount").value, 10);
+      const endDate = document.getElementById("fEndDate").value;
+
+      if(repeat === "twice" && !(secondDay >= 1 && secondDay <= 31)){
+        err.textContent = "Enter a day of month (1–31) for the 2nd payment.";
+        err.style.display = "block"; return;
+      }
+      if(endType === "count" && !(endCount >= 1)){
+        err.textContent = "Enter how many payments to add.";
+        err.style.display = "block"; return;
+      }
+      if(endType === "count" && endCount > MAX_RECURRING){
+        err.textContent = `That's too many payments — the limit is ${MAX_RECURRING}.`;
+        err.style.display = "block"; return;
+      }
+      if(endType === "date" && !endDate){
+        err.textContent = "Pick an end date for the repeating payment.";
+        err.style.display = "block"; return;
+      }
+      if(endType === "date" && endDate < date){
+        err.textContent = "The end date must be on or after the due date.";
+        err.style.display = "block"; return;
+      }
+
+      const dates = buildRecurringDates(date, repeat, secondDay, endType, endCount, endDate);
+      for(const ds of dates){
+        items.push({ id:newId(), lender, date:ds, amount, paid:false });
+      }
+      showToast(`Added ${dates.length} payment${dates.length===1?"":"s"} for ${lender}`, false);
+    }
   }
   save();
   render();
