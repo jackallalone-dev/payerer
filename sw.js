@@ -1,9 +1,11 @@
-const CACHE = "payerer-v15";
+// keep in sync with the ?v= query on styles.css / app.js in index.html
+const VERSION = "16";
+const CACHE = "payerer-v" + VERSION;
 const ASSETS = [
   "./",
   "./index.html",
-  "./styles.css",
-  "./app.js",
+  "./styles.css?v=" + VERSION,
+  "./app.js?v=" + VERSION,
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png"
@@ -40,7 +42,9 @@ self.addEventListener("fetch", e => {
         }
         return res;
       }).catch(() =>
-        caches.match(e.request).then(hit =>
+        // ignoreSearch: a ?v=N asset can fall back to any cached copy of the
+        // same file, so a version bump doesn't break offline use
+        caches.match(e.request, { ignoreSearch: true }).then(hit =>
           hit || (e.request.mode === "navigate" ? caches.match("./index.html") : Response.error())
         )
       )
