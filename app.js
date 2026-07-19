@@ -288,7 +288,7 @@ function hideToast(){
 
 document.getElementById("undoBtn").addEventListener("click", ()=>{
   if(lastDeleted){
-    items.push(lastDeleted);
+    items.push(...(Array.isArray(lastDeleted) ? lastDeleted : [lastDeleted]));
     save();
     render();
   }
@@ -695,8 +695,40 @@ const ovLender = document.getElementById("ovLender");
 const ovStatus = document.getElementById("ovStatus");
 const ovSort = document.getElementById("ovSort");
 const ovDir = document.getElementById("ovDir");
+const ovDelete = document.getElementById("ovDelete");
 let ovAsc = true;
 let ovFromButton = false;
+let ovSelectMode = false;
+const ovSelected = new Set();
+
+function setSelectMode(on){
+  ovSelectMode = on;
+  ovSelected.clear();
+  overviewPage.classList.toggle("selecting", on);
+  ovDelete.classList.toggle("confirm", on);
+  const label = on ? "Delete selected payments" : "Select payments to delete";
+  ovDelete.title = label;
+  ovDelete.setAttribute("aria-label", label);
+  if(overviewOpen()) renderOverview();
+}
+
+ovDelete.addEventListener("click", ()=>{
+  if(!ovSelectMode){
+    setSelectMode(true);
+    return;
+  }
+  if(ovSelected.size === 0){
+    setSelectMode(false);
+    return;
+  }
+  const deleted = items.filter(p=>ovSelected.has(p.id));
+  items = items.filter(p=>!ovSelected.has(p.id));
+  setSelectMode(false);
+  save();
+  render();
+  lastDeleted = deleted;
+  showToast(`Deleted ${deleted.length} payment${deleted.length===1?"":"s"}`);
+});
 
 function overviewOpen(){ return location.hash === "#overview"; }
 
@@ -706,7 +738,10 @@ function updateView(){
   document.getElementById("schedule").style.display = on ? "none" : "";
   overviewPage.style.display = on ? "" : "none";
   if(on) renderOverview();
-  else ovFromButton = false;
+  else{
+    ovFromButton = false;
+    if(ovSelectMode) setSelectMode(false);
+  }
 }
 window.addEventListener("hashchange", updateView);
 
@@ -765,8 +800,8 @@ function renderOverview(){
     return;
   }
   box.innerHTML = list.map(p=>`
-    <div class="ov-row ${p.paid?'done':''}" data-id="${p.id}">
-      <input type="checkbox" data-id="${p.id}" ${p.paid?'checked':''} aria-label="Mark paid">
+    <div class="ov-row ${p.paid?'done':''} ${ovSelectMode && ovSelected.has(p.id)?'sel':''}" data-id="${p.id}">
+      <input type="checkbox" data-id="${p.id}" ${(ovSelectMode ? ovSelected.has(p.id) : p.paid)?'checked':''} aria-label="${ovSelectMode?'Select for deletion':'Mark paid'}">
       <div class="ov-main">
         <span class="lender" style="color:${colors[p.lender]}">${p.lender}</span>
         <span class="ov-date">${prettyDate(p.date)}</span>
@@ -785,8 +820,18 @@ ovDir.addEventListener("click", ()=>{
   renderOverview();
 });
 
+function toggleSelected(id){
+  if(ovSelected.has(id)) ovSelected.delete(id);
+  else ovSelected.add(id);
+  renderOverview();
+}
+
 document.getElementById("overviewList").addEventListener("change", e=>{
   if(!e.target.matches("input[type=checkbox]")) return;
+  if(ovSelectMode){
+    toggleSelected(e.target.dataset.id);
+    return;
+  }
   const item = items.find(p=>p.id===e.target.dataset.id);
   if(!item) return;
   item.paid = e.target.checked;
@@ -797,7 +842,9 @@ document.getElementById("overviewList").addEventListener("change", e=>{
 document.getElementById("overviewList").addEventListener("click", e=>{
   if(e.target.matches("input[type=checkbox]")) return;
   const row = e.target.closest(".ov-row");
-  if(row) openPayDialog("edit", row.dataset.id);
+  if(!row) return;
+  if(ovSelectMode) toggleSelected(row.dataset.id);
+  else openPayDialog("edit", row.dataset.id);
 });
 
 // the button is hidden in the markup so a stale cached script can't
