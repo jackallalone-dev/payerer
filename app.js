@@ -730,6 +730,14 @@ ovDelete.addEventListener("click", ()=>{
   showToast(`Deleted ${deleted.length} payment${deleted.length===1?"":"s"}`);
 });
 
+document.getElementById("ovSelectAll").addEventListener("click", ()=>{
+  const ids = [...document.querySelectorAll("#overviewList .ov-row")].map(r=>r.dataset.id);
+  const allSelected = ids.length > 0 && ids.every(id=>ovSelected.has(id));
+  if(allSelected) ids.forEach(id=>ovSelected.delete(id));
+  else ids.forEach(id=>ovSelected.add(id));
+  renderOverview();
+});
+
 function overviewOpen(){ return location.hash === "#overview"; }
 
 function updateView(){

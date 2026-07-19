@@ -291,7 +291,10 @@ html[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator{
 
 /* ---------- overview page ---------- */
 .ov-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+#ovSelectAll{display:none;margin-left:auto}
+#overviewPage.selecting #ovSelectAll{display:inline-flex}
 #ovDelete{margin-left:auto}
+#overviewPage.selecting #ovDelete{margin-left:0}
 #ovDelete .ic-check{display:none}
 #ovDelete.confirm .ic-trash{display:none}
 #ovDelete.confirm .ic-check{display:block}
